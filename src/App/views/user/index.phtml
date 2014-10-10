@@ -1,0 +1,23 @@
+<div class="container">
+    <h1>Users</h1>
+</div>
+<div class="container">
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>E-mail</th>
+				<th>Password</th>
+				<th>Using GA</th>
+			</tr>
+		</thead>
+		<?php foreach ($this->view->users as $name => $value): ?>
+			<tr>
+				<td><?php echo $value['name']; ?></td>
+				<td><?php echo $value['email']; ?></td>
+				<td><?php echo $value['password']; ?></td>
+				<td><?php echo ($value['usingGoogleAuth']) ? 'Yes': 'No'; ?></td>
+			</tr>
+		<?php endforeach ?>
+	</table>
+</div>

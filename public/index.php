@@ -7,6 +7,7 @@
 chdir(dirname(__DIR__));
 
 error_reporting(E_ALL /*^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT*/);
+session_start();
 
 if (file_exists('vendor/autoload.php')) {
     $loader = include 'vendor/autoload.php';
