@@ -1,0 +1,24 @@
+<div class="container">
+    <h1>Activate Google Authenticator</h1>
+</div>
+<div class="container">
+    <div class="">
+        <img src="<?php echo $this->view->qrCode; ?>" class="img-thumbnail" />
+        <?php if ($this->view->usingGoogleAuth): ?>
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <strong>Google Authenticator enabled!</strong> Do Login to see the Google Authenticator working.
+            </div>
+        <?php else: ?>
+        <form role="form" action="" method="POST">
+            <input value="<?php echo $this->view->secretKey; ?>" type="hidden" name="secretKey">
+            <div class="form-group">
+                <label for="exampleCode">code</label>
+                <input type="text" name="code" class="form-control" id="exampleCode" placeholder="Enter name">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        <?php endif ?>
+    </div>
+
+</div> <!-- /container -->

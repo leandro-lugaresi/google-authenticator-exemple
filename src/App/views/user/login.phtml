@@ -1,0 +1,15 @@
+
+<div class="container">
+	<?php if ($this->view->error): ?>
+		<div class="alert alert-danger alert-dismissible" role="alert">
+			<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<strong>Error!</strong> Login invalid.
+		</div>
+	<?php endif ?>
+	<form class="form-signin" role="form" method="POST">
+		<h2 class="form-signin-heading">Please sign in</h2>
+		<input name="email" value="<?php echo (isset($_POST['email'])) ? $_POST['email'] : ''; ?>" type="email" class="form-control" placeholder="Email address" autocomplete="on">
+		<input name="password" value="<?php echo (isset($_POST['password'])) ? $_POST['password'] : ''; ?>"  type="password" class="form-control" placeholder="Password">
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+	</form>
+</div>

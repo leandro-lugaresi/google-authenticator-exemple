@@ -16,6 +16,11 @@ return array(
         'controller' => 'user',
         'action' => 'logout'
     ),
+    'activate' => array(
+        'route' => '/user/activate',
+        'controller' => 'user',
+        'action' => 'activate'
+    ),
     'create-user' => array(
         'route' => '/user/create',
         'controller' => 'user',

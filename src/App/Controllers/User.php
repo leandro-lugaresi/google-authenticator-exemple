@@ -2,22 +2,41 @@
 
 namespace App\Controllers;
 
+use GoogleAuthenticator\GoogleAuthenticator;
+
 class User extends AbstractController
 {
 
     public function index()
     {
-        if (!isset($_SESSION['isAuth']) || !$_SESSION['isAuth']) {
-            header("Location: /");
-            die();
-        }
-        if (isset($_SESSION['users'])) {
-            $this->view->users = $_SESSION['users'];
-        } else {
-            $this->view->users = array();
-        }
+        $this->verifyUser();
+        $this->view->users = $this->getUsers();
 
         $this->render('index');
+    }
+
+    public function activate()
+    {
+        $this->verifyUser();
+        $users = $this->getUsers();
+        $googleAuth = new GoogleAuthenticator($users[$_SESSION['auth']]['secretKey']);
+        $applicationName = $_SESSION['auth'];
+        $googleAuth->setIssuer('Demo Google Authenticator');
+
+        if (isset($_POST['code']) && isset($_POST['secretKey'])) {
+            $googleAuth->setSecretKey($_POST['secretKey']);
+            if ($googleAuth->verifyCode($_POST['code'])) {
+                $users[$_SESSION['auth']]['usingGoogleAuth'] = true;
+                $users[$_SESSION['auth']]['secretKey'] = $googleAuth->getSecretKey();
+                $this->setUsers($users);
+
+            }
+        }
+
+        $this->view->secretKey = $googleAuth->getSecretKey();
+        $this->view->qrCode = $googleAuth->getQRCodeUrl($applicationName);
+        $this->view->usingGoogleAuth = $users[$_SESSION['auth']]['usingGoogleAuth'];
+        $this->render('activate');
     }
 
     public function create()
@@ -30,6 +49,7 @@ class User extends AbstractController
                 'email' => $_POST['email'],
                 'password' => $_POST['password'],
                 'usingGoogleAuth' => false,
+                'secretKey' => null,
             );
 
             $this->setUsers($users);
@@ -55,13 +75,14 @@ class User extends AbstractController
             $users = $this->getUsers();
             if(
                 array_key_exists($email, $users)
-                && $users[$email]['password'] == $_POST['password'])
-            {
+                && $users[$email]['password'] == $_POST['password']
+            ){
                 $_SESSION['isAuth'] = true;
-                $_SESSION['auth'] => $email;
+                $_SESSION['auth'] = $email;
                 header("Location: /user");
                 die();
             }
+            $this->view->error = true;
         }
         $this->render('login');
     }
@@ -71,12 +92,20 @@ class User extends AbstractController
         if (isset($_SESSION['users'])) {
             return $_SESSION['users'];
         } else {
-            return = array();
+            return array();
         }
     }
 
     private function setUsers(array $users)
     {
         $_SESSION['users'] = $users;
+    }
+
+    private function verifyUser()
+    {
+        if (!isset($_SESSION['isAuth']) || !$_SESSION['isAuth']) {
+            header("Location: /");
+            die();
+        }
     }
 }
