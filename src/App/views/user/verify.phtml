@@ -1,0 +1,17 @@
+
+<div class="container">
+	<?php if ($this->view->error): ?>
+		<div class="alert alert-danger alert-dismissible" role="alert">
+			<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<strong>Error!</strong> Code invalid.
+		</div>
+	<?php endif ?>
+	<form class="form-google-authenticator" role="form" method="POST">
+		<h2 class="form-signin-heading">Google Authenticator verify</h2>
+		<div class="form-group">
+            <label for="exempleCode">Code</label>
+            <input name="code" value="" type="text" class="form-control" id="exempleCode" placeholder="Google Authenticator code" autocomplete="off">
+        </div>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Verify</button>
+	</form>
+</div>

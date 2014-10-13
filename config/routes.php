@@ -21,6 +21,11 @@ return array(
         'controller' => 'user',
         'action' => 'activate'
     ),
+    'verify' => array(
+        'route' => '/user/verify',
+        'controller' => 'user',
+        'action' => 'verify'
+    ),
     'create-user' => array(
         'route' => '/user/create',
         'controller' => 'user',

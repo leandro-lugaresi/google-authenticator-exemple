@@ -55,6 +55,7 @@ class User extends AbstractController
             $this->setUsers($users);
             $_SESSION['auth'] = $_POST['email'];
             $_SESSION['isAuth'] = true;
+            $_SESSION['doGoogleAuth'] = false;
         }
 
         $this->render('create');
@@ -73,18 +74,47 @@ class User extends AbstractController
         if (!empty($_POST['email'])) {
             $email = $_POST['email'];
             $users = $this->getUsers();
-            if(
-                array_key_exists($email, $users)
-                && $users[$email]['password'] == $_POST['password']
-            ){
-                $_SESSION['isAuth'] = true;
-                $_SESSION['auth'] = $email;
+
+            $valid = array_key_exists($email, $users)
+                && $users[$email]['password'] == $_POST['password'];
+
+            if ($valid) {
+                if ($users[$email]['usingGoogleAuth']) {
+                    $_SESSION['isAuth'] = true;
+                    $_SESSION['doGoogleAuth'] = true;
+                    $_SESSION['auth'] = $email;
+                    header("Location: /user/verify");
+                    die();
+                } else {
+                    $_SESSION['isAuth'] = true;
+                    $_SESSION['doGoogleAuth'] = false;
+                    $_SESSION['auth'] = $email;
+                    header("Location: /user");
+                    die();
+                }
+            }
+            $this->view->error = true;
+        }
+        $this->render('login');
+    }
+
+    public function verify()
+    {
+        if (!empty($_POST['code'])) {
+            $code = $_POST['code'];
+            $users = $this->getUsers();
+
+            $googleAuth = new GoogleAuthenticator($users[$_SESSION['auth']]['secretKey']);
+
+            if ($googleAuth->verifyCode($code)) {
+                $_SESSION['doGoogleAuth'] =false;
                 header("Location: /user");
                 die();
             }
             $this->view->error = true;
         }
-        $this->render('login');
+        $this->render('verify');
+
     }
 
     private function getUsers()
@@ -104,7 +134,11 @@ class User extends AbstractController
     private function verifyUser()
     {
         if (!isset($_SESSION['isAuth']) || !$_SESSION['isAuth']) {
-            header("Location: /");
+            header("Location: /user/login");
+            die();
+        }
+        if ($_SESSION['doGoogleAuth']) {
+            header("Location: /user/verify");
             die();
         }
     }
